@@ -36,7 +36,7 @@ if ($mysqli->query($createTableSql) === TRUE) {
     echo "Error creating table: " . $mysqli->error . "<br>";
 }
 
-$sql = "SELECT * FROM user_posts ORDER BY postedAt DESC";
+$sql = "SELECT * FROM user_posts ORDER BY id DESC";
 $result = $mysqli->query($sql);
 
 if ($result) {

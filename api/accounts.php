@@ -15,31 +15,61 @@ $mysqli = new mysqli($db_host, $db_user, $db_password, $db_db);
 if ($mysqli->connect_error) {
     die('Connect Error (' . $mysqli->connect_errno . ') ' . $mysqli->connect_error);
 }
-$sql_create_table = "CREATE TABLE IF NOT EXISTS accounts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    imageUrl VARCHAR(255) NOT NULL,
-    followers INT DEFAULT 0
-  )";
+$insert_sql = "INSERT INTO accounts (name, imageUrl, followers) VALUES
+    ('John Doe', 'https://img.freepik.com/free-photo/beauty-portrait-of-female-face_93675-132045.jpg', 1000),
+    ('Alice Smith', 'https://img.freepik.com/free-photo/beauty-portrait-of-female-face_93675-132045.jpg', 500),
+    ('Bob Johnson', 'https://img.freepik.com/free-photo/beauty-portrait-of-female-face_93675-132045.jpg', 750)";
 
-$sql_insert_account = "INSERT INTO accounts (name, imageUrl, followers) VALUES ('John Doe', 'https://example.com/avatar.jpg', 1000)";
+if ($mysqli->query($insert_sql) === TRUE) {
 
-$sql_insert_accounts = "INSERT INTO accounts (name, imageUrl, followers) VALUES
-                        ('Alice Smith', 'https://example.com/alice.jpg', 500),
-                        ('Bob Johnson', 'https://example.com/bob.jpg', 750)";
-$sql_select_accounts = "SELECT id, name, imageUrl, followers FROM accounts";
-$result = $mysqli->query($sql_select_accounts);
+} else {
+    echo "Error inserting records: " . $mysqli->error . "<br>";
+}
 
-if ($result->num_rows > 0) {
-    $accounts = array();
-    while ($row = $result->fetch_assoc()) {
-        $accounts[] = $row;
-    }
+$useMockData = false; // Можно становить в true для использования моковых данных
 
+if ($useMockData) {
+    // Моковые данные
+    $accounts = [
+        [
+            'id' => 1,
+            'name' => 'John Doe',
+            'imageUrl' => 'https://example.com/avatar.jpg',
+            'followers' => 1000
+        ],
+        [
+            'id' => 2,
+            'name' => 'Alice Smith',
+            'imageUrl' => 'https://example.com/alice.jpg',
+            'followers' => 500
+        ],
+        [
+            'id' => 3,
+            'name' => 'Bob Johnson',
+            'imageUrl' => 'https://example.com/bob.jpg',
+            'followers' => 750
+        ]
+    ];
+
+    // Возвращаем моковые данные в формате JSON
     header('Content-Type: application/json');
     echo json_encode($accounts);
 } else {
-    echo "No accounts found";
+    // Реальные данные из базы данных
+    $sql_select_accounts = "SELECT id, name, imageUrl, followers FROM accounts";
+    $result = $mysqli->query($sql_select_accounts);
+
+    if ($result->num_rows > 0) {
+        $accounts = array();
+        while ($row = $result->fetch_assoc()) {
+            $accounts[] = $row;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($accounts);
+    } else {
+        echo "No accounts found";
+    }
 }
 
 $mysqli->close();

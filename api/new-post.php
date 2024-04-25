@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: Content-Type");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $postData = json_decode(file_get_contents("php://input"), true);
 
-    if (isset($postData['name'], $postData['avatarUrl'], $postData['postText'], $postData['images'], $postData['likesCount'], $postData['liked'])) {
+    if (isset($postData['name'], $postData['avatarUrl'], $postData['postText'], $postData['content'], $postData['likesCount'], $postData['liked'])) {
         $db_host = 'localhost';
         $db_user = 'root';
         $db_password = 'root';
@@ -20,13 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $postedAt = date('Y-m-d H:i:s');
 
-        $stmt = $mysqli->prepare("INSERT INTO user_posts (name, avatarUrl, postText, postedAt, images, likesCount, liked) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $mysqli->prepare("INSERT INTO user_posts (name, avatarUrl, postText, postedAt, content, likesCount, liked) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
         if (!$stmt) {
             die('Prepare failed: (' . $mysqli->errno . ') ' . $mysqli->error);
         }
 
-        $stmt->bind_param("sssssid", $postData['name'], $postData['avatarUrl'], $postData['postText'], $postedAt, $postData['images'], $postData['likesCount'], $postData['liked']);
+        $stmt->bind_param("sssssid", $postData['name'], $postData['avatarUrl'], $postData['postText'], $postedAt, $postData['content'], $postData['likesCount'], $postData['liked']);
 
         if ($stmt->execute()) {
             $newPostId = $mysqli->insert_id;
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'avatarUrl' => $postData['avatarUrl'],
                 'postText' => $postData['postText'],
                 'postedAt' => $postedAt,
-                'images' => $postData['images'],
+                'content' => $postData['content'],
                 'likesCount' => $postData['likesCount'],
                 'liked' => $postData['liked']
             ];
