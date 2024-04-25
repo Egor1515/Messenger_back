@@ -2,7 +2,6 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 
-// Моковые данные чата
 $chatData = [
     [
         "sender" => "John",
